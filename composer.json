@@ -1,0 +1,50 @@
+{
+    "name": "rjvim/car",
+    "description": "Add Comments, Actions, Reviews to your Laravel App",
+    "keywords": [
+        "comments",
+        "actions",
+        "reviews"
+    ],
+    "homepage": "https://github.com/rjvim/car",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rajiv Seelam",
+            "email": "rajiv@betalectic.com",
+            "homepage": "https://betalectic.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.4",
+        "orchestra/testbench": "~3.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Betalectic\\Car\\": "src"
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "Betalectic\\Car\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Betalectic\\Car\\PermisoServiceProvider"
+            ]
+        }
+    }
+}
