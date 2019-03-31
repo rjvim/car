@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePermisoEntityParentsTable extends Migration
+class CreateCommentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,13 @@ class CreatePermisoEntityParentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('permiso_entity_parents', function (Blueprint $table) {
+        Schema::create('car_comments', function (Blueprint $table) {
+            $table->string('uuid')->unique();
             $table->increments('id');
-            $table->integer('parent_id');
-            $table->integer('child_id');
+            $table->integer('user_id');
+            $table->nullableMorphs('module');
+            $table->text('comment')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ class CreatePermisoEntityParentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permiso_entity_parents');
+        Schema::dropIfExists('car_comments');
     }
 }

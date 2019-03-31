@@ -1,10 +1,10 @@
 <?php
 
-namespace Betalectic\Permiso;
+namespace Betalectic\Car;
 
 use Illuminate\Support\ServiceProvider;
 
-class PermisoServiceProvider extends ServiceProvider
+class CarServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -20,8 +20,8 @@ class PermisoServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(RegistrableObserver::class, function($app) {
-            return new RegistrableObserver(new Permiso);
-        });
+        // $this->app->singleton(RegistrableObserver::class, function($app) {
+        //     return new RegistrableObserver(new Permiso);
+        // });
     }
 }

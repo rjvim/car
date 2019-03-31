@@ -43,7 +43,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Betalectic\\Car\\PermisoServiceProvider"
+                "Betalectic\\Car\\CarServiceProvider"
             ]
         }
     }
