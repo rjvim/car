@@ -7,8 +7,6 @@ use Log;
 
 class CarComments
 {
-	
-
     public function __construct()
     {
     }
@@ -28,7 +26,6 @@ class CarComments
             $comments = $comments->where('user_id', $user->id);
         }
 
-        dd($comments);
         return $comments;
     }
 
