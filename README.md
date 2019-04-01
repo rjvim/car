@@ -28,21 +28,21 @@ php artisan vendor:publish --provider="Betalectic\Car\CarServiceProvider" --tag=
  First Initialise the CarComments helper as . 
  ```$carComments = new CarComments()```
  
- **add Comment:   
+ **add Comment:**
      def: `addComment($comment, $module, $user)` . </br>
   ```$carComments->addComment($newComment, $module, $user)```
   
-  - *module and user should be model instances.
+  - ***$module and $user should be model instances.***
   
- **update Comment:  
+ **update Comment:**
       def: `updateComment($data, $commentId)` . </br>
    ```$carComments->updateComment($newComment, $commentId)```
  
- **delete Comment:  
+ **delete Comment:**
    def: `deleteComment($commentId)` . </br>
    ```$carComments->deleteComment($commentId)```
    
- **get Comments:  
+ **get Comments:**
       def: `getComments($module = NULL, $user = NULL)` . </br>
       ```$carComments->getComments($module, $user)```
    
