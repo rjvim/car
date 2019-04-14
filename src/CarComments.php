@@ -29,12 +29,13 @@ class CarComments
         return $comments;
     }
 
-    public function addComment($comment, $module, $user)
+    public function addComment($comment, $module, $user, $actionAssignedComment=NULL)
     {
     	$data['module_id'] = $module->getKey();
     	$data['module_type'] = get_class($module);
     	$data['user_id'] = $user->getKey();
-    	$data['comment'] = $comment;
+        $data['comment'] = $comment;
+        $data['action_assigned_comment_id'] = $actionAssignedComment;
 
     	$comment = Comment::create($data);
 
