@@ -16,10 +16,5 @@ class Action extends Model
 	protected $table = "car_actions";
 
 	public $guarded = [];
-	
-	public function assignedActions()
-	{
-		// return $this->(ActionAssignedUsers)
-	}
 
 }

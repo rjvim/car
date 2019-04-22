@@ -40,58 +40,48 @@ class CarActions
 
     public function addActionToModule($module, $owner, $action, $actionIdentifier, $status, $needsReview=FALSE, $rule)
     {
-    	$data['module_id'] = $module->getKey();
-    	$data['module_type'] = get_class($module);
-    	$data['created_by_user'] = $owner->getKey();
-    	$data['action'] = $action;
-    	$data['action_identifier'] = $actionIdentifier;
-    	$data['status'] = $status;
-    	$data['needs_review'] = $needsReview;
-    	$data['rule'] = $rule;
+        $action = Action::updateOrCreate(
+            ['module_id' => $module->getKey(), 'module_type' => get_class($module), 'action_identifier' => $actionIdentifier],
+            ['created_by_user' => $owner->getKey(), 'action' => $action, 'status' => $status, 'needs_review' => $needsReview, 'rule' => $rule]
+        );
 
-    	$action = Action::firstOrCreate($data);
-
-    	return $action;
+        return $action;
     }
 
 
-    public function updateAction($actionId, $action, $actionIdentifier, $status, $needsReview, $rule)
-    {
-        $oldAction = Action::find($actionId);
+    // public function updateAction($actionId, $action, $actionIdentifier, $status, $needsReview, $rule)
+    // {
+    //     $oldAction = Action::find($actionId);
 
-    	$oldAction->action = $action;
-    	$oldAction->action_identifier = $actionIdentifier;
-    	$oldAction->status = $status;
-    	$oldAction->needs_review = $needsReview;
-        $oldAction->rule = $rule;
-    	$oldAction->save();
+    //  $oldAction->action = $action;
+    //  $oldAction->action_identifier = $actionIdentifier;
+    //  $oldAction->status = $status;
+    //  $oldAction->needs_review = $needsReview;
+    //     $oldAction->rule = $rule;
+    //  $oldAction->save();
 
-    	return $oldAction;
-    }
+    //  return $oldAction;
+    // }
 
     public function deleteAction($actionId)
     {
         $action = Action::find($actionId);
-    	$action->delete();
+        $action->delete();
     }
 
 
-    public function assignModuleActionToUser($actionId, $userId, $status, $comment=NULL, $mandatory)
+    public function assignModuleActionToUser($actionId, $user, $status, $comment=NULL, $mandatory)
     {
-        $data['action_id'] = $actionId;
-        $data['user_id'] = $userId;
-        $data['status'] = $status;
-        $data['comment'] = $comment;
-        $data['mandatory'] = $mandatory;
+        $assigedAction  = ActionAssignedUser::updateOrCreate(
+            ['action_id' => $actionId, 'user_id' =>$user->getKey()],
+            ['status' => $status, 'mandatory' => $mandatory]
+        );
 
-        $assigedAction  = ActionAssignedUser::firstOrCreate($data);
-
-        $carComments = new CarComments();
-
-        $user = User::find($userId);
-        $module = $assigedAction;
-        $actionAssignedCommentId = $assigedAction->id;
-        $carComments->addComment($comment, $module, $user, $actionAssignedCommentId);
+        // we will not add comment while assigning
+        // $carComments = new CarComments();
+        // $module = $assigedAction;
+        // $actionAssignedCommentId = $assigedAction->id;
+        // $carComments->addComment($comment, $module, $user, $actionAssignedCommentId);
 
         return $assigedAction;
     }

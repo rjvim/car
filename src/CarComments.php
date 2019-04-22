@@ -1,9 +1,10 @@
 <?php 
 namespace Betalectic\Car;
 
+use Log;
 use Betalectic\Car\Models\Comment;
 use Illuminate\Support\Facades\DB;
-use Log;
+use Betalectic\Car\Models\ActionAssignedUser;
 
 class CarComments
 {
@@ -29,32 +30,38 @@ class CarComments
         return $comments;
     }
 
-    public function addComment($comment, $module, $user, $actionAssignedComment=NULL)
+    public function addComment($comment, $module, $user, $isActionComment=FALSE, $actionId=NULL)
     {
-    	$data['module_id'] = $module->getKey();
-    	$data['module_type'] = get_class($module);
-    	$data['user_id'] = $user->getKey();
+        if($isActionComment) {
+            $assignedRecord = ActionAssignedUser::where('action_id', $actionId)
+                                            ->where('user_id', $user->getKey())
+                                            ->first();
+        }
+
+        $data['module_id'] = $module->getKey();
+        $data['module_type'] = get_class($module);
+        $data['user_id'] = $user->getKey();
         $data['comment'] = $comment;
-        $data['action_assigned_comment_id'] = $actionAssignedComment;
+        $data['action_assigned_comment_id'] =  $assignedRecord ? $assignedRecord->id : NULL;
 
-    	$comment = Comment::create($data);
+        $comment = Comment::create($data);
 
-    	return $comment;
+        return $comment;
     }
 
 
     public function updateComment($data, $commentId)
     {
         $oldComment =  Comment::find($commentId);
-    	$oldComment->comment = $data;
-    	$oldComment->save();
+        $oldComment->comment = $data;
+        $oldComment->save();
 
-    	return $oldComment;
+        return $oldComment;
     }
 
     public function deleteComment($commentId)
     {
         $comment =  Comment::find($commentId);
-    	$comment->delete();
+        $comment->delete();
     }
 }
