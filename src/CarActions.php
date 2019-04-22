@@ -96,4 +96,20 @@ class CarActions
 
         return 'success';
     }
+
+
+    public function changeActionStatus($action, $status)
+    {
+        # code...
+    }
+
+    public function changeAssignedActionStatus($actionId, $userId, $status)
+    {
+        $assignedRecord = ActionAssignedUser::where('action_id', $actionId)
+                                            ->where('user_id', $user->getKey())
+                                            ->first();
+        
+        $assignedRecord->status = $status;
+        $assignedRecord->save();
+    }
 }
