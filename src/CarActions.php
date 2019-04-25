@@ -40,28 +40,19 @@ class CarActions
 
     public function addActionToModule($module, $owner, $action, $actionIdentifier, $status, $needsReview=FALSE, $rule)
     {
-        $action = Action::updateOrCreate(
-            ['module_id' => $module->getKey(), 'module_type' => get_class($module), 'action_identifier' => $actionIdentifier],
-            ['created_by_user' => $owner->getKey(), 'action' => $action, 'status' => $status, 'needs_review' => $needsReview, 'rule' => $rule]
+        $actions = Action::where(
+            ['module_id' => $module->getKey(), 'module_type' => get_class($module), 'action_identifier' => $actionIdentifier, 'status' => 'pending']
+        )
+        ->update(['status' => 'rejected']);
+
+        $action = Action::create(
+            ['module_id' => $module->getKey(), 'module_type' => get_class($module), 'action_identifier' => $actionIdentifier,
+            'created_by_user' => $owner->getKey(), 'action' => $action, 'status' => $status, 'needs_review' => $needsReview, 'rule' => $rule]
         );
 
         return $action;
     }
 
-
-    // public function updateAction($actionId, $action, $actionIdentifier, $status, $needsReview, $rule)
-    // {
-    //     $oldAction = Action::find($actionId);
-
-    //  $oldAction->action = $action;
-    //  $oldAction->action_identifier = $actionIdentifier;
-    //  $oldAction->status = $status;
-    //  $oldAction->needs_review = $needsReview;
-    //     $oldAction->rule = $rule;
-    //  $oldAction->save();
-
-    //  return $oldAction;
-    // }
 
     public function deleteAction($actionId)
     {
@@ -77,12 +68,6 @@ class CarActions
             ['status' => $status, 'mandatory' => $mandatory]
         );
 
-        // we will not add comment while assigning
-        // $carComments = new CarComments();
-        // $module = $assigedAction;
-        // $actionAssignedCommentId = $assigedAction->id;
-        // $carComments->addComment($comment, $module, $user, $actionAssignedCommentId);
-
         return $assigedAction;
     }
 
@@ -97,19 +82,65 @@ class CarActions
         return 'success';
     }
 
-
-    public function changeActionStatus($action, $status)
+    public function changeAssignedActionStatusforUser($action, $user, $status)
     {
-        # code...
-    }
-
-    public function changeAssignedActionStatus($actionId, $userId, $status)
-    {
-        $assignedRecord = ActionAssignedUser::where('action_id', $actionId)
+        $assignedRecord = ActionAssignedUser::where('action_id', $action->id)
                                             ->where('user_id', $user->getKey())
                                             ->first();
         
         $assignedRecord->status = $status;
         $assignedRecord->save();
+    }
+
+    public function changeActionStatus($action, $module)
+    {
+        $totalReviewers = ActionAssignedUser::where('action_id', $action->id)->get();
+        $reviewersWhoApproved = $totalReviewers->where('status', 'approved');
+        $reviewersWhoRejected = $totalReviewers->where('status', 'rejected');
+        $reviewersWhoRequestChanges = $totalReviewers->where('status', 'request-changes');
+
+        $actionRecord = Action::find($action->uuid);
+
+        if($actionRecord->rule === 'must') {
+            if($reviewersWhoApproved->count() === $totalReviewers->count()) {
+                $actionRecord->status = 'approved';
+                $actionRecord->save();
+            } else if($reviewersWhoRequestChanges->count() === $totalReviewers->count()) {
+                //change changes requested to rejected
+                $actionRecord->status = 'changes-requested';
+                $actionRecord->save();
+            } else if($reviewersWhoRejected->count() > 0) {
+                $actionRecord->status = 'rejected';
+                $actionRecord->save();
+            } else {
+                $actionRecord->status = 'pending';
+                $actionRecord->save();
+            }
+        } else if($actionRecord->rule === 'should') {
+            if($reviewersWhoRejected->count() === $totalReviewers->count()) {
+                $actionRecord->status = 'rejected';
+                $actionRecord->save();
+            } else if($reviewersWhoRequestChanges->count() === $totalReviewers->count()) {
+                $actionRecord->status = 'changes-requested';
+                $actionRecord->save();
+            } else if($reviewersWhoApproved->count() > 0) {
+                $actionRecord->status = 'approved';
+                $actionRecord->save();
+            } else {
+                $actionRecord->status = 'pending';
+                $actionRecord->save();
+            }
+        }
+
+        $module->status = $actionRecord->status;
+        $module->save();
+    }
+
+    public function getActionAssignedUsers($actionId)
+    {
+        $actionAssignedUsers = ActionAssignedUser::where('action_id', $actionId)
+                                                ->get();
+
+        return $actionAssignedUsers;
     }
 }

@@ -1,8 +1,9 @@
 <?php
 namespace Betalectic\Car\Models;
 
-use Betalectic\Car\Http\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Model;
+use Betalectic\Car\Http\Traits\UuidTrait;
+use Betalectic\Car\Models\ActionAssignedUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Action extends Model
