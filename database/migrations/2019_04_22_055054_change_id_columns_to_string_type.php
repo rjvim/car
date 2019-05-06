@@ -32,13 +32,13 @@ class ChangeIdColumnsToStringType extends Migration
     public function down()
     {
         Schema::table('car_actions', function (Blueprint $table) {
-            $table->integer('module_id')->change();
-            $table->integer('created_by_user')->change();
+            $table->dropColumn('module_id')->change();
+            $table->dropColumn('created_by_user')->change();
         });
 
         Schema::table('car_comments', function (Blueprint $table) {
-            $table->integer('module_id')->change();
-            $table->integer('user_id')->change();
+            $table->dropColumn('module_id')->change();
+            $table->dropColumn('user_id')->change();
         });
     }
 }
