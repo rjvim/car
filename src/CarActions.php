@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace Betalectic\Car;
 
 use Log;
@@ -82,13 +82,14 @@ class CarActions
         return 'success';
     }
 
-    public function changeAssignedActionStatusforUser($action, $user, $status)
+    public function changeAssignedActionStatusforUser($action, $user, $status, $comment=NULL)
     {
         $assignedRecord = ActionAssignedUser::where('action_id', $action->id)
                                             ->where('user_id', $user->getKey())
                                             ->first();
-        
+
         $assignedRecord->status = $status;
+        $assignedRecord->comment = $comment;
         $assignedRecord->save();
     }
 
