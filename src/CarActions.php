@@ -110,7 +110,10 @@ class CarActions
                 //change changes requested to rejected
                 $actionRecord->status = 'changes-requested';
                 $actionRecord->save();
-            } else if($reviewersWhoRejected->count() > 0) {
+            } else if(($reviewersWhoRejected->count() > 0) && ($reviewersWhoRejected->count() != $totalReviewers->count())){
+                $actionRecord->status = 'changes-requested';
+                $actionRecord->save();
+            } else if($reviewersWhoRejected->count() === $totalReviewers->count()) {
                 $actionRecord->status = 'rejected';
                 $actionRecord->save();
             } else {
