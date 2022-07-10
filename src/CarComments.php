@@ -32,7 +32,7 @@ class CarComments
         return $comments;
     }
 
-    public function addComment($comment, $module, $user, $isActionComment=FALSE, $actionId=NULL)
+        public function addComment($comment, $module, $user, $isActionComment=FALSE, $actionId=NULL, $extra_filter = NULL)
     {
         if($isActionComment) {
             $assignedRecord = ActionAssignedUser::where('action_id', $actionId)
@@ -44,8 +44,8 @@ class CarComments
         $data['module_type'] = get_class($module);
         $data['user_id'] = $user->getKey();
         $data['comment'] = $comment;
+        $data['extra_filter'] = $extra_filter ? $extra_filter : null;
         // $data['action_assigned_comment_id'] =  $assignedRecord ? $assignedRecord->id : NULL;
-
         $comment = Comment::create($data);
 
         return $comment;
